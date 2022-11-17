@@ -11,6 +11,8 @@ void ms5540c::init() {
     SPI.setBitOrder(MSBFIRST);
     SPI.setClockDivider(SPI_CLOCK_DIV32);
     pinMode(mclk_, OUTPUT);
+    TCCR1B = (TCCR1B & 0xF8) | 1;
+    analogWrite(mclk_, 128);
     this->reset();
 
     int16_t words[4];
@@ -63,11 +65,6 @@ void ms5540c::reset() {
     SPI.transfer(RST_SEQ[0]);
     SPI.transfer(RST_SEQ[1]);
     SPI.transfer(RST_SEQ[2]);
-}
-
-void ms5540c::nextTick() {
-    TCCR1B = (TCCR1B & 0xF8) | 1;
-    analogWrite(mclk_, 128);
 }
 
 float ms5540c::getTemperature() {

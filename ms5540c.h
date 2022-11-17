@@ -55,7 +55,6 @@ public:
     ms5540c(int mclk);
 
     void init();
-    void nextTick();
     void reset();
     float getTemperature();
     float getPressure(UnitType t);
