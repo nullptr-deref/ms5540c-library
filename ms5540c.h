@@ -14,7 +14,6 @@
 // ... and, for some reason (I haven't investigated it yet) we should use MCLK as well.
 // It is obligatory, without attaching this pin somewhere (pin which is used for it
 // is configured via ctor of ms5540c class) measurement acquisition won't work.
-// You should configure this pin as OUTPUT.
 
 const int CONV_DUR = 35;
 

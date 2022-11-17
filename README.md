@@ -1,5 +1,7 @@
 # MS5540C Arduino Library
 
+**If you're looking for Russian version of this library, please visit** [it's Github page](https://github.com/militaryCoder/ms5540c-library-ru).
+
 ## Sensor description
 
 Given sensor operates using slightly modified SPI interface (the main difference is that sensor does not
