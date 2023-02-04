@@ -1,6 +1,5 @@
 ms5540c	KEYWORD1
 init	KEYWORD2
-nextTick	KEYWORD2
 reset	KEYWORD2
 getTemperature	KEYWORD2
 getPressure	KEYWORD2
