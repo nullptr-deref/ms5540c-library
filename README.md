@@ -18,6 +18,35 @@ Also, there is MCLK pin on the sensor so make sure to provide additional pin for
 
 Note: it's better to have pullup resistors on serial lines to get rid of noise.
 
+## Code example
+
+Here's a simple example which measures current temperature
+and pressure in mbars each 3 seconds.
+
+```ino
+#include <ms5540c.h>
+
+const int mclk = 13; // Actually can be any digital pin you want.
+ms5540c sensor(mclk);
+
+void setup() {
+    Serial.begin(9600);
+    SPI.begin();
+    sensor.init();
+}
+
+void loop() {
+    sensor.reset();
+    const float temp = sensor.getTemperature();
+    const float prs = sensor.getPressure(UnitType::mbar);
+    Serial.print("Temp: ");
+    Serial.println(temp);
+    Serial.print("Pressure: ");
+    Serial.println(prs);
+    delay(3000);
+}
+```
+
 ### My actual pinout
 
 | Line | Arduino pin |
