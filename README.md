@@ -9,15 +9,6 @@ have SS/CS (Slave Select/Chip Select) line. Instead, this sensor takes 3 START a
 after each bit control sequence.
 It can operate up to 100m below water surface (as said in datasheet).
 
-## Connection with MCU features
-
-First of all, library uses hardware implementation of SPI library, so refer to actual pinout diagram of
-your MCU to make sure which actual pins are reliable for MISO/MOSI/SCK lines.
-Also, there is MCLK pin on the sensor so make sure to provide additional pin for MCLK line.
-**Without the latter everything isn't going to work. You've been warned.**
-
-Note: it's better to have pullup resistors on serial lines to get rid of noise.
-
 ## Code example
 
 Here's a simple example which measures current temperature
@@ -46,6 +37,15 @@ void loop() {
     delay(3000);
 }
 ```
+
+## Connection with MCU features
+
+First of all, library uses hardware implementation of SPI library, so refer to actual pinout diagram of
+your MCU to make sure which actual pins are reliable for MISO/MOSI/SCK lines.
+Also, there is MCLK pin on the sensor so make sure to provide additional pin for MCLK line.
+**Without the latter everything isn't going to work. You've been warned.**
+
+Note: it's better to have pullup resistors on serial lines to get rid of noise.
 
 ### My actual pinout
 
