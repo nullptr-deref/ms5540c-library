@@ -55,6 +55,8 @@ enum UnitType {
     mmHg
 };
 
+float mbarTommHg(long mbar);
+
 class ms5540c {
 public:
     ms5540c(int mclk);

@@ -1,5 +1,6 @@
 ms5540c	KEYWORD1
 init	KEYWORD2
 reset	KEYWORD2
+mbarTommHg	KEYWORD2
 getTemperature	KEYWORD2
 getPressure	KEYWORD2
