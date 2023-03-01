@@ -41,7 +41,7 @@ int16_t ms5540c::readWord(int widx) {
 
 int16_t ms5540c::readData(MeasurementType t) const {
     this->reset();
-    byte recv[0];
+    byte recv[2];
     switch(t) {
         case Temperature:
             SPI.transfer(TMP_MSR[0]);
@@ -77,7 +77,7 @@ float ms5540c::getTemperature(SecondOrderCompensation secondOrder) {
             if (TEMP < 200) {
                 T2 = (11 * (coefs[5] + 24) * (200 - TEMP) * (200 - TEMP) ) >> 20;
             }
-            else if (TEMP > 450) {
+            else {
                 T2 = (3 * (coefs[5] + 24) * (450 - TEMP) * (450 - TEMP) ) >> 20;
             }
             TEMP2 = TEMP - T2;
