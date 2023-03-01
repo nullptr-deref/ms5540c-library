@@ -30,9 +30,14 @@ const int16_t WORDS_ACQ[8] = {
     0x1D, 0xA0  // 4th word
 };
 
-enum MsrType {
+enum MeasurementType {
     Temperature,
     Pressure
+};
+
+enum SecondOrderCompensation {
+    SOC = true,
+    noSOC = false
 };
 
 const byte TMP_MSR[2] = {
@@ -55,15 +60,16 @@ public:
     ms5540c(int mclk);
 
     void init();
-    void reset();
-    float getTemperature();
-    float getPressure(UnitType t);
+    void reset() const;
+    float getTemperature(SecondOrderCompensation secondOrder = SOC);
+    float getPressure(UnitType t, SecondOrderCompensation secondOrder = noSOC);
 
 private:
     int16_t readWord(int widx);
-    int16_t readData(MsrType t);
-    long getTempi();
-    long getPressurei();
+    int16_t readData(MeasurementType t) const;
+    long getTempi() const;
+    long getPressurei() const;
+    long calcRefAndActualTempDifference() const;
 
     int mclk_;
     long coefs[6];

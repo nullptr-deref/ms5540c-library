@@ -39,7 +39,7 @@ int16_t ms5540c::readWord(int widx) {
     return (recv[0] << 8) | recv[1];
 }
 
-int16_t ms5540c::readData(MsrType t) {
+int16_t ms5540c::readData(MeasurementType t) const {
     this->reset();
     byte recv[0];
     switch(t) {
@@ -60,63 +60,92 @@ int16_t ms5540c::readData(MsrType t) {
     return (recv[0] << 8) | recv[1];
 }
 
-void ms5540c::reset() {
+void ms5540c::reset() const {
     SPI.setDataMode(SPI_MODE0);
     SPI.transfer(RST_SEQ[0]);
     SPI.transfer(RST_SEQ[1]);
     SPI.transfer(RST_SEQ[2]);
 }
 
-float ms5540c::getTemperature() {
+float ms5540c::getTemperature(SecondOrderCompensation secondOrder) {
     const long TEMP = getTempi();
-    float TEMPREAL = TEMP / 10.0f;
 
-    return TEMPREAL;
-}
+    if (secondOrder) {
+        long TEMP2 = TEMP;
+        if (TEMP < 200 || TEMP > 450) {
+            long T2 = 0;
+            if (TEMP < 200) {
+                T2 = (11 * (coefs[5] + 24) * (200 - TEMP) * (200 - TEMP) ) >> 20;
+            }
+            else if (TEMP > 450) {
+                T2 = (3 * (coefs[5] + 24) * (450 - TEMP) * (450 - TEMP) ) >> 20;
+            }
+            TEMP2 = TEMP - T2;
+        }
 
-float ms5540c::getPressure(UnitType t) {
-    const long PCOMP = getPressurei();
-    if (t == mmHg) {
-        return PCOMP * 750.06 / 10000;
-        // mbar*10 -> mmHg === ((mbar/10)/1000)*750.06
+        return TEMP2 / 10.0f;
     }
 
-    const long TEMP = getTempi();
-    if (TEMP < 200 || TEMP > 450) {
-        long T2 = 0;
-        float P2 = 0;
-        if (TEMP < 200) {
-            T2 = (11 * (coefs[5] + 24) * (200 - TEMP) * (200 - TEMP) ) >> 20;
-            P2 = (3 * T2 * (PCOMP - 3500) ) >> 14;
+    return TEMP / 10.0f;
+}
+
+float mbarTommHg(long mbar) {
+    return mbar * 750.06 / 10000;
+}
+
+float ms5540c::getPressure(UnitType t, SecondOrderCompensation secondOrder) {
+    long PCOMP = getPressurei();
+
+    if (secondOrder) {
+        const long TEMP = getTempi();
+        long PCOMP2 = PCOMP;
+        if (TEMP < 200 || TEMP > 450) {
+            long T2 = 0;
+            float P2 = 0;
+            if (TEMP < 200) {
+                T2 = (11 * (coefs[5] + 24) * (200 - TEMP) * (200 - TEMP) ) >> 20;
+                P2 = (3 * T2 * (PCOMP - 3500) ) >> 14;
+            }
+            else if (TEMP > 450) {
+                T2 = (3 * (coefs[5] + 24) * (450 - TEMP) * (450 - TEMP) ) >> 20;
+                P2 = (T2 * (PCOMP - 10000) ) >> 13;
+            }
+            PCOMP2 = PCOMP - P2;
         }
-        else if (TEMP > 45.0) {
-            T2 = (3 * (coefs[5] + 24) * (450 - TEMP) * (450 - TEMP) ) >> 20;
-            P2 = (T2 * (PCOMP - 10000) ) >> 13;
+
+        if (t == mmHg) {
+            return mbarTommHg(PCOMP2);
         }
-        const float TEMP2 = TEMP - T2;
-        const float PCOMP2 = PCOMP - P2;
 
         return PCOMP2;
+    }
+
+    if (t == mmHg) {
+        return mbarTommHg(PCOMP);
     }
 
     return PCOMP;
 }
 
-long ms5540c::getTempi() {
-    const int16_t D2 = readData(Temperature);
+long ms5540c::calcRefAndActualTempDifference() const {
+    const int16_t temp = readData(Temperature);
     const long UT1 = (coefs[4] << 3) + 20224;
-    const long dT = D2 - UT1;
+
+    return temp - UT1;
+}
+
+long ms5540c::getTempi() const {
+    const long dT = calcRefAndActualTempDifference();
     const long TEMP = 200 + ((dT * (coefs[5] + 50)) >> 10);
 
     return TEMP;
 }
 
-long ms5540c::getPressurei() {
+long ms5540c::getPressurei() const {
     const int16_t D1 = readData(Pressure);
-    const int16_t D2 = readData(Temperature);
 
     const long UT1 = (coefs[4] << 3) + 20224;
-    const long dT = D2 - UT1;
+    const long dT = calcRefAndActualTempDifference();
 
     const long OFF  = (coefs[1] * 4) + (((coefs[3] - 512) * dT) >> 12);
     const long SENS = coefs[0] + ((coefs[2] * dT) >> 10) + 24576;
