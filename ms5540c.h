@@ -72,7 +72,7 @@ public:
     void init();
     void reset() const;
     float getTemperature(SecondOrderCompensation secondOrder = SOC);
-    float getPressure(UnitType t, SecondOrderCompensation secondOrder = SOC);
+    float getPressure(UnitType t = UnitType::mbar, SecondOrderCompensation secondOrder = SOC);
 
 private:
     int16_t readWord(int widx);
