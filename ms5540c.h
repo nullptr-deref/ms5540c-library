@@ -1,6 +1,10 @@
 #ifndef MS5540C_H
 #define MS5540C_H
 
+#include <stdint.h>
+
+typedef unsigned char byte;
+
 /* === READ THIS SECTION BEFORE PERFORMING ANY ACTIONS WITH MS5540C SENSOR! ===
  * First of all, I should mention that device, for which this library was written,
  * communicates with it's master controller via SPI protocol, so you should
