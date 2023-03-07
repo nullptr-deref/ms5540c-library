@@ -1,8 +1,6 @@
 #ifndef MS5540C_H
 #define MS5540C_H
 
-#include <SPI.h>
-
 /* === READ THIS SECTION BEFORE PERFORMING ANY ACTIONS WITH MS5540C SENSOR! ===
  * First of all, I should mention that device, for which this library was written,
  * communicates with it's master controller via SPI protocol, so you should
@@ -21,6 +19,7 @@
  */
 const int8_t MCLK = 9;
 
+const int8_t CONV_DUR = 35;
 
 const byte RST_SEQ[3] = {
     0x15,
