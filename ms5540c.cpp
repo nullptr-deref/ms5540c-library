@@ -4,15 +4,12 @@
 
 #include <SPI.h>
 
-ms5540c::ms5540c(int mclk)
-: mclk_(mclk) {}
-
 void ms5540c::init() {
     SPI.setBitOrder(MSBFIRST);
     SPI.setClockDivider(SPI_CLOCK_DIV32);
-    pinMode(mclk_, OUTPUT);
+    pinMode(MCLK, OUTPUT);
     TCCR1B = (TCCR1B & 0xF8) | 1;
-    analogWrite(mclk_, 128);
+    analogWrite(MCLK, 128);
     this->reset();
 
     int16_t words[4];

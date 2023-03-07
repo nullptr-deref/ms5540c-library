@@ -3,19 +3,24 @@
 
 #include <SPI.h>
 
-// === READ THIS SECTION BEFORE PERFORMING ANY ACTIONS WITH MS5540C SENSOR! ===
-// First of all, I should mention that device, for which this library was written,
-// communicates with it's master controller via SPI protocol, so you should
-// consult Arduino pinout diagram (https://docs.arduino.cc/hardware/uno-rev3).
-// For general Arduino Uno R3 device required pins are follow:
-// MOSI (COPI) - D11
-// MISO (CIPO) - D12
-// SCK - D13
-// ... and, for some reason (I haven't investigated it yet) we should use MCLK as well.
-// It is obligatory, without attaching this pin somewhere (pin which is used for it
-// is configured via ctor of ms5540c class) measurement acquisition won't work.
+/* === READ THIS SECTION BEFORE PERFORMING ANY ACTIONS WITH MS5540C SENSOR! ===
+ * First of all, I should mention that device, for which this library was written,
+ * communicates with it's master controller via SPI protocol, so you should
+ * consult Arduino pinout diagram (https://docs.arduino.cc/hardware/uno-rev3).
+ * For general Arduino Uno R3 device required pins are follow:
+ * MOSI (COPI) - D11
+ * MISO (CIPO) - D12
+ * SCK - D13
+ */
 
-const int CONV_DUR = 35;
+
+/* Since you can access Timer/Counter1 output match A output
+ * only through digital pin 9 (on Arduino Uno R3, see it's pinout
+ * here: https://www.circuito.io/blog/arduino-uno-pinout), 'mclk' input
+ * of the ms5540c sensor should be attached to 9th digital pin.
+ */
+const int8_t MCLK = 9;
+
 
 const byte RST_SEQ[3] = {
     0x15,
@@ -59,7 +64,7 @@ float mbarTommHg(long mbar);
 
 class ms5540c {
 public:
-    ms5540c(int mclk);
+    ms5540c() = default;
 
     void init();
     void reset() const;
@@ -73,7 +78,6 @@ private:
     long getPressurei() const;
     long calcRefAndActualTempDifference() const;
 
-    int mclk_;
     long coefs[6];
 };
 
