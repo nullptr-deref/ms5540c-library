@@ -15,10 +15,10 @@ Here's a simple example which measures current temperature
 and pressure in mbars each 3 seconds.
 
 ```ino
+#include <SPI.h>
 #include <ms5540c.h>
 
-const int mclk = 13; // Actually can be any digital pin you want.
-ms5540c sensor(mclk);
+ms5540c sensor;
 
 void setup() {
     Serial.begin(9600);
@@ -27,31 +27,26 @@ void setup() {
 }
 
 void loop() {
-    sensor.reset();
     const float temp = sensor.getTemperature();
     const float prs = sensor.getPressure(UnitType::mbar);
     Serial.print("Temp: ");
     Serial.println(temp);
-    Serial.print("Pressure: ");
+    Serial.print("\tPressure: ");
     Serial.println(prs);
+
     delay(3000);
 }
 ```
 
 ## Connection with MCU features
 
-First of all, library uses hardware implementation of SPI library, so refer to actual pinout diagram of
+Library uses hardware implementation of SPI library, so refer to actual pinout diagram of
 your MCU to make sure which actual pins are reliable for MISO/MOSI/SCK lines.
-Also, there is MCLK pin on the sensor so make sure to provide additional pin for MCLK line.
-**Without the latter everything isn't going to work. You've been warned.**
+
+**Very important note**: sensor lacks internal clock source so it is needed to provide external
+clock source. It is made via MCLK pin. Make sure you've connected this input to `OC1A` pin
+(refer to your actual MCU and Arduino pinout). Connecting this input to some another pin
+will lead to sensor malfunctioning and you'll get strange and incorrect measurement
+results (like negative pressure, etc.).
 
 Note: it's better to have pullup resistors on serial lines to get rid of noise.
-
-### My actual pinout
-
-| Line | Arduino pin |
-|------|-------------|
-| MOSI |     D11     |
-| MISO |     D12     |
-| SCK  |     D13     |
-| SS   |     ---     |
