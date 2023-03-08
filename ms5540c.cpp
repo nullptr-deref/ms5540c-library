@@ -4,9 +4,13 @@
 
 #include <SPI.h>
 
-void ms5540c::init() {
+void ms5540c::setupSPI() const {
     SPI.setBitOrder(MSBFIRST);
     SPI.setClockDivider(SPI_CLOCK_DIV32);
+}
+
+void ms5540c::init() {
+    this->setupSPI();
     pinMode(MCLK, OUTPUT);
     TCCR1B = (TCCR1B & 0xF8) | 1;
     analogWrite(MCLK, 128);
@@ -26,6 +30,7 @@ void ms5540c::init() {
 }
 
 int16_t ms5540c::readWord(int widx) {
+    setupSPI();
     byte recv[2];
     SPI.transfer(WORDS_ACQ[widx*2]);
     SPI.transfer(WORDS_ACQ[widx*2 + 1]);
@@ -37,6 +42,7 @@ int16_t ms5540c::readWord(int widx) {
 }
 
 int16_t ms5540c::readData(MeasurementType t) const {
+    setupSPI();
     this->reset();
     byte recv[2];
     switch(t) {
@@ -58,6 +64,7 @@ int16_t ms5540c::readData(MeasurementType t) const {
 }
 
 void ms5540c::reset() const {
+    setupSPI();
     SPI.setDataMode(SPI_MODE0);
     SPI.transfer(RST_SEQ[0]);
     SPI.transfer(RST_SEQ[1]);
