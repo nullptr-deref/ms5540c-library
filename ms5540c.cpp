@@ -97,6 +97,10 @@ float mbarTommHg(long mbar) {
     return mbar * 750.06 / 10000;
 }
 
+float degC(long temp) {
+    return temp / 10.0f;
+}
+
 long ms5540c::getPressure(SecondOrderCompensation secondOrder) {
     long PCOMP = getPressurei();
 
@@ -117,15 +121,7 @@ long ms5540c::getPressure(SecondOrderCompensation secondOrder) {
             PCOMP2 = PCOMP - P2;
         }
 
-        if (t == mmHg) {
-            return mbarTommHg(PCOMP2);
-        }
-
         return PCOMP2;
-    }
-
-    if (t == mmHg) {
-        return mbarTommHg(PCOMP);
     }
 
     return PCOMP;

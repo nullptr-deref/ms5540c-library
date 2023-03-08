@@ -59,9 +59,7 @@ const byte PRS_MSR[2] = {
 };
 
 float mbarTommHg(long mbar);
-float degC(long temp) {
-    return temp / 10.0f;
-}
+float degC(long temp);
 
 class ms5540c {
 public:
