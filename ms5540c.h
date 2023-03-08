@@ -58,12 +58,10 @@ const byte PRS_MSR[2] = {
     0x40
 };
 
-enum UnitType {
-    mbar,
-    mmHg
-};
-
 float mbarTommHg(long mbar);
+float degC(long temp) {
+    return temp / 10.0f;
+}
 
 class ms5540c {
 public:
@@ -71,8 +69,8 @@ public:
 
     void init();
     void reset() const;
-    float getTemperature(SecondOrderCompensation secondOrder = SOC);
-    float getPressure(UnitType t = UnitType::mbar, SecondOrderCompensation secondOrder = SOC);
+    long getTemperature(SecondOrderCompensation secondOrder = SOC);
+    long getPressure(SecondOrderCompensation secondOrder = SOC);
 
 private:
     int16_t readWord(int widx);
@@ -80,6 +78,8 @@ private:
     long getTempi() const;
     long getPressurei() const;
     long calcRefAndActualTempDifference() const;
+
+    void setupSPI() const;
 
     long coefs[6];
 };

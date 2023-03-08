@@ -71,7 +71,7 @@ void ms5540c::reset() const {
     SPI.transfer(RST_SEQ[2]);
 }
 
-float ms5540c::getTemperature(SecondOrderCompensation secondOrder) {
+long ms5540c::getTemperature(SecondOrderCompensation secondOrder) {
     const long TEMP = getTempi();
 
     if (secondOrder) {
@@ -87,17 +87,17 @@ float ms5540c::getTemperature(SecondOrderCompensation secondOrder) {
             TEMP2 = TEMP - T2;
         }
 
-        return TEMP2 / 10.0f;
+        return TEMP2;
     }
 
-    return TEMP / 10.0f;
+    return TEMP;
 }
 
 float mbarTommHg(long mbar) {
     return mbar * 750.06 / 10000;
 }
 
-float ms5540c::getPressure(UnitType t, SecondOrderCompensation secondOrder) {
+long ms5540c::getPressure(SecondOrderCompensation secondOrder) {
     long PCOMP = getPressurei();
 
     if (secondOrder) {
@@ -105,7 +105,7 @@ float ms5540c::getPressure(UnitType t, SecondOrderCompensation secondOrder) {
         long PCOMP2 = PCOMP;
         if (TEMP < 200 || TEMP > 450) {
             long T2 = 0;
-            float P2 = 0;
+            long P2 = 0;
             if (TEMP < 200) {
                 T2 = (11 * (coefs[5] + 24) * (200 - TEMP) * (200 - TEMP) ) >> 20;
                 P2 = (3 * T2 * (PCOMP - 3500) ) >> 14;
