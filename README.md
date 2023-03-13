@@ -29,15 +29,16 @@ void setup() {
     Serial.begin(9600);
     SPI.begin();
     sensor.init();
+    Serial.println("Temp\t\tmbar\t\tatm\t\tpascal\n");
 }
 
 void loop() {
     const long temp_raw = sensor.getTemperature(); // Temperature in tenths of the deg C
     const long prs_raw = sensor.getPressure(); // pressure in tenths of a mbar (because of the sensor precision)
-    Serial.print("Temp: ");
-    Serial.println(conv::degC(temp_raw)); // degC() is library-defined conversion
-    Serial.print("\tPressure: ");
-    Serial.println(conv::mbarTommHg(conv::mbar(prs_raw)));
+    Serial.print(conv::degC(temp_raw)); Serial.print("\t\t");
+    Serial.print(conv::mbar(prs_raw)); Serial.print("\t\t");
+    Serial.print(conv::mbarToAtm(conv::mbar(prs_raw))); Serial.print("\t\t");
+    Serial.println(conv::mbarToPascal(conv::mbar(prs_raw)));
 
     delay(3000);
 }
