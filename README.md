@@ -13,6 +13,8 @@ It can operate up to 100m below water surface (as said in datasheet).
 
 Here's a simple example which measures current temperature
 and pressure in mbars each 3 seconds.
+For further explanations on the comments read section
+"Explanations" below.
 
 ```ino
 #include <SPI.h>
@@ -23,20 +25,47 @@ ms5540c sensor;
 void setup() {
     Serial.begin(9600);
     SPI.begin();
-    sensor.init();
+    sensor.init(); // Vital first-run setup
 }
 
 void loop() {
-    const float temp = sensor.getTemperature();
-    const float prs = sensor.getPressure(UnitType::mbar);
+    const long temp = sensor.getTemperature(); // Temperature in tenths of the deg C
+    const long prs = sensor.getPressure(); // pressure in tenths of a mbar (because of the sensor precision)
     Serial.print("Temp: ");
-    Serial.println(temp);
+    Serial.println(degC(temp)); // degC() is library-defined conversion
     Serial.print("\tPressure: ");
-    Serial.println(prs);
+    Serial.println(mbarTommHg(10*prs));
 
     delay(3000);
 }
 ```
+### Explanations
+
+```ino
+SPI.begin(<desired_baud_rate>);
+```
+
+Library doesn't start SPI internally so you should
+start SPI connection yourself.
+
+```ino
+const long temp = sensor.getTemperature(); // Temperature in tenths of the deg C
+const long prs = sensor.getPressure(); // pressure in tenths of a mbar (because of the sensor precision)
+```
+
+Because the accuracy of the sensor is one-tenth
+of the mbar and one-tenth of the degrees Celsius,
+values of the temperature and pressure are being
+returned in tenths of mbars and deg's C respectively.
+My library does not execute any conversions on the
+raw data and transfers all of the conversions to
+the user-defined code.
+This is done in such way because AVR MCU's (at least,
+those MCU's that are used in Arduino devices) does
+not support floating-point in hardware.
+Still, I provide handy functions that provide
+handy conversions between pressure units and
+convert raw temperature data to degrees Celsius.
 
 ## Connection with MCU features
 
