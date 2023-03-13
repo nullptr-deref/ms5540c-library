@@ -4,6 +4,26 @@
 
 #include <SPI.h>
 
+float conv::mbarTommHg(long mbar) {
+    return mbar * 750.06 / 100000;
+}
+
+float conv::degC(long temp) {
+    return temp / 10.0f;
+}
+
+float conv::mbar(long pressure) {
+    return pressure / 10.0f;
+}
+
+float conv::mbarToAtm(long mbar) {
+    return mbar / 1013.25;
+}
+
+float conv::mbarToPascal(long mbar) {
+    return mbar * 100;
+}
+
 void ms5540c::setupSPI() const {
     SPI.setBitOrder(MSBFIRST);
     SPI.setClockDivider(SPI_CLOCK_DIV32);
