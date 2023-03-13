@@ -64,7 +64,7 @@ namespace lib_int {
 
 enum SecondOrderCompensation {
     SOC = true,
-    noSOC = false
+    NO_SOC = false
 };
 
 namespace conv {
