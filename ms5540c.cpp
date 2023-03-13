@@ -94,7 +94,7 @@ long ms5540c::getTemperature(SecondOrderCompensation secondOrder) {
 }
 
 float mbarTommHg(long mbar) {
-    return mbar * 750.06 / 10000;
+    return mbar * 750.06 / 100000;
 }
 
 float degC(long temp) {
