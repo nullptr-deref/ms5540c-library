@@ -1,6 +1,18 @@
+# Class name and method names
 ms5540c	KEYWORD1
 init	KEYWORD2
 reset	KEYWORD2
-mbarTommHg	KEYWORD2
 getTemperature	KEYWORD2
 getPressure	KEYWORD2
+
+# Conversions
+mbarTommHg	KEYWORD2
+mbarTommHg	KEYWORD2
+mbarToAtm	KEYWORD2
+mbarToPascal	KEYWORD2
+degC	KEYWORD2
+mbar	KEYWORD2
+
+# Literals
+SOC	LITERAL1
+NO_SOC	LITERAL1
