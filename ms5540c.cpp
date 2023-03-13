@@ -31,9 +31,9 @@ void ms5540c::setupSPI() const {
 
 void ms5540c::init() {
     this->setupSPI();
-    pinMode(MCLK, OUTPUT);
+    pinMode(lib_int::MCLK, OUTPUT);
     TCCR1B = (TCCR1B & 0xF8) | 1;
-    analogWrite(MCLK, 128);
+    analogWrite(lib_int::MCLK, 128);
     this->reset();
 
     int16_t words[4];
@@ -49,11 +49,11 @@ void ms5540c::init() {
     coefs[5] = words[1] & 0x003F;
 }
 
-int16_t ms5540c::readWord(int widx) {
+int16_t ms5540c::readWord(int8_t widx) const {
     setupSPI();
     byte recv[2];
-    SPI.transfer(WORDS_ACQ[widx*2]);
-    SPI.transfer(WORDS_ACQ[widx*2 + 1]);
+    SPI.transfer(lib_int::WORDS_ACQ[widx*2]);
+    SPI.transfer(lib_int::WORDS_ACQ[widx*2 + 1]);
     SPI.setDataMode(SPI_MODE1);
     recv[0] = SPI.transfer(0x0);
     recv[1] = SPI.transfer(0x0);
@@ -61,21 +61,21 @@ int16_t ms5540c::readWord(int widx) {
     return (recv[0] << 8) | recv[1];
 }
 
-int16_t ms5540c::readData(MeasurementType t) const {
+int16_t ms5540c::readData(lib_int::MeasurementType t) const {
     setupSPI();
     this->reset();
     byte recv[2];
     switch(t) {
-        case Temperature:
-            SPI.transfer(TMP_MSR[0]);
-            SPI.transfer(TMP_MSR[1]);
+        case lib_int::MeasurementType::Temperature:
+            SPI.transfer(lib_int::TMP_MSR[0]);
+            SPI.transfer(lib_int::TMP_MSR[1]);
         break;
-        case Pressure:
-            SPI.transfer(PRS_MSR[0]);
-            SPI.transfer(PRS_MSR[1]);
+        case lib_int::MeasurementType::Pressure:
+            SPI.transfer(lib_int::PRS_MSR[0]);
+            SPI.transfer(lib_int::PRS_MSR[1]);
         break;
     }
-    delay(CONV_DUR);
+    delay(lib_int::CONV_DUR);
     SPI.setDataMode(SPI_MODE1);
     recv[0] = SPI.transfer(0x0);
     recv[1] = SPI.transfer(0x0);
@@ -86,12 +86,12 @@ int16_t ms5540c::readData(MeasurementType t) const {
 void ms5540c::reset() const {
     setupSPI();
     SPI.setDataMode(SPI_MODE0);
-    SPI.transfer(RST_SEQ[0]);
-    SPI.transfer(RST_SEQ[1]);
-    SPI.transfer(RST_SEQ[2]);
+    SPI.transfer(lib_int::RST_SEQ[0]);
+    SPI.transfer(lib_int::RST_SEQ[1]);
+    SPI.transfer(lib_int::RST_SEQ[2]);
 }
 
-long ms5540c::getTemperature(SecondOrderCompensation secondOrder) {
+long ms5540c::getTemperature(SecondOrderCompensation secondOrder) const {
     const long TEMP = getTempi();
 
     if (secondOrder) {
@@ -113,15 +113,7 @@ long ms5540c::getTemperature(SecondOrderCompensation secondOrder) {
     return TEMP;
 }
 
-float mbarTommHg(long mbar) {
-    return mbar * 750.06 / 100000;
-}
-
-float degC(long temp) {
-    return temp / 10.0f;
-}
-
-long ms5540c::getPressure(SecondOrderCompensation secondOrder) {
+long ms5540c::getPressure(SecondOrderCompensation secondOrder) const {
     long PCOMP = getPressurei();
 
     if (secondOrder) {
@@ -148,7 +140,7 @@ long ms5540c::getPressure(SecondOrderCompensation secondOrder) {
 }
 
 long ms5540c::calcRefAndActualTempDifference() const {
-    const int16_t temp = readData(Temperature);
+    const int16_t temp = readData(lib_int::MeasurementType::Temperature);
     const long UT1 = (coefs[4] << 3) + 20224;
 
     return temp - UT1;
@@ -162,9 +154,8 @@ long ms5540c::getTempi() const {
 }
 
 long ms5540c::getPressurei() const {
-    const int16_t D1 = readData(Pressure);
+    const int16_t D1 = readData(lib_int::MeasurementType::Pressure);
 
-    const long UT1 = (coefs[4] << 3) + 20224;
     const long dT = calcRefAndActualTempDifference();
 
     const long OFF  = (coefs[1] * 4) + (((coefs[3] - 512) * dT) >> 12);
