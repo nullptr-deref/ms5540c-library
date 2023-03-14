@@ -1,13 +1,14 @@
 # MS5540C Arduino Library
 
-**If you're looking for Russian version of this library, please visit** [it's Github page](https://github.com/militaryCoder/ms5540c-library-ru).
-
 ## Brief sensor description
 
-Given sensor operates using slightly modified SPI interface (the main difference is that sensor does not
-have SS/CS (Slave Select/Chip Select) line. Instead, this sensor receives 3 START and 3 STOP bits before and
-after each bit control sequence.
-It can operate up to 100m below water surface (as said in datasheet).
+Given sensor operates using slightly modified SPI interface
+(the main difference is that sensor does not have SS/CS
+(Slave Select/Chip Select) line.
+Instead, this sensor receives 3 START and 3 STOP bits before
+and after each bit control sequence.
+It can operate up to 100m below water surface
+(as said in datasheet).
 
 ## Code example
 
