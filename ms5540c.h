@@ -80,7 +80,7 @@ class ms5540c {
 public:
     ms5540c() = default;
 
-    void init();
+    void begin();
     void reset() const;
     long getTemperature(SecondOrderCompensation secondOrder = SOC) const;
     long getPressure(SecondOrderCompensation secondOrder = SOC) const;

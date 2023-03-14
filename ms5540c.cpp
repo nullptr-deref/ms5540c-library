@@ -29,7 +29,7 @@ void ms5540c::setupSPI() const {
     SPI.setClockDivider(SPI_CLOCK_DIV32);
 }
 
-void ms5540c::init() {
+void ms5540c::begin() {
     this->setupSPI();
     pinMode(lib_int::MCLK, OUTPUT);
     TCCR1B = (TCCR1B & 0xF8) | 1;
