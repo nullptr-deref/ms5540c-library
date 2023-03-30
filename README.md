@@ -35,7 +35,7 @@ void setup() {
 void loop() {
     const long temp_raw = sensor.getTemperature(); // Temperature in tenths of the deg C
     const long prs_raw = sensor.getPressure(); // pressure in tenths of a mbar (because of the sensor precision)
-    Serial.print("Temperature: );   Serial.print(conv::degC(temp_raw));                      Serial.println(" C");
+    Serial.print("Temperature: ");   Serial.print(conv::degC(temp_raw));                      Serial.println(" C");
     Serial.print("Pressure: ");     Serial.print(conv::mbar(prs_raw));                       Serial.println(" mbar");
     Serial.print("          ");     Serial.print(conv::mbarToAtm(conv::mbar(prs_raw)));      Serial.println(" atm");
     Serial.print("          ");     Serial.println(conv::mbarToPascal(conv::mbar(prs_raw))); Serial.println(" pas");
